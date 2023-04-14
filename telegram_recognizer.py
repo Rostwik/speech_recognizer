@@ -6,7 +6,7 @@ import logging
 import telegram
 from telegram import Update, ForceReply
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
-from google.cloud import dialogflow
+    from google.cloud import dialogflow
 from dotenv import load_dotenv
 
 logger = logging.getLogger('speech_recognizer')
