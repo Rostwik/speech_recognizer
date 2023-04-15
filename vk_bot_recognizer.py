@@ -36,7 +36,7 @@ def detect_intent_texts(project_id, session_id, text, language_code='ru-RU'):
         request={"session": session, "query_input": query_input}
     )
 
-    return response.query_result.fulfillment_text
+    return response
 
 
 def main():
@@ -60,11 +60,13 @@ def main():
         logger.info('Бот запущен.')
         for event in longpoll.listen():
             if event.type == VkEventType.MESSAGE_NEW and event.to_me:
-                vk_api.messages.send(
-                    user_id=event.user_id,
-                    message=detect_intent_texts(google_project_id, event.user_id, event.text),
-                    random_id=random.randint(1, 1000)
-                )
+                response = detect_intent_texts(google_project_id, event.user_id, event.text)
+                if not response.query_result.intent.is_fallback:
+                    vk_api.messages.send(
+                        user_id=event.user_id,
+                        message=response.query_result.fulfillment_text,
+                        random_id=random.randint(1, 1000)
+                    )
     except requests.exceptions.ConnectionError:
         logger.error('Интернет исчез')
         time.sleep(5)
