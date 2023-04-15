@@ -6,7 +6,7 @@ import logging
 import telegram
 from telegram import Update, ForceReply
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
-    from google.cloud import dialogflow
+from google.cloud import dialogflow
 from dotenv import load_dotenv
 
 logger = logging.getLogger('speech_recognizer')
@@ -49,10 +49,10 @@ def help_command(update: Update, context: CallbackContext):
     update.message.reply_text('Help!')
 
 
-def echo(update: Update, context: CallbackContext):
+def echo(update: Update, context: CallbackContext, google_project_id):
     user_id = update.message.chat_id
     update.message.reply_text(
-        detect_intent_texts('dvmn-speech-recognizer', user_id, update.message.text)
+        detect_intent_texts(google_project_id, user_id, update.message.text)
     )
 
 
@@ -60,6 +60,7 @@ def main():
     load_dotenv()
     telegram_api_token = os.getenv('TELEGRAM_API_TOKEN')
     telegram_admin_chat_id = os.getenv('TELEGRAM_CHAT_ID')
+    google_project_id = os.getenv('GOOGLE_CLOUD_PROJECT')
 
     logging.basicConfig(
         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO
@@ -73,18 +74,22 @@ def main():
 
     dispatcher.add_handler(CommandHandler("start", start))
     dispatcher.add_handler(CommandHandler("help", help_command))
-    dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, echo))
+    dispatcher.add_handler(MessageHandler(
+        Filters.text & ~Filters.command,
+        lambda update, context: echo(update, context, google_project_id))
+    )
 
     while True:
         try:
+            logger.info('Телеграм бот запущен.')
             updater.start_polling()
             updater.idle()
-            logger.info('Бот запущен.')
+
         except requests.exceptions.ConnectionError:
             logger.error('Интернет исчез')
             time.sleep(5)
         except Exception as err:
-            logger.error(f'Бот упал с ошибкой: {err}', exc_info=True)
+            logger.error(f'Телеграм бот упал с ошибкой: {err}', exc_info=True)
 
 
 if __name__ == '__main__':

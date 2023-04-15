@@ -39,19 +39,12 @@ def detect_intent_texts(project_id, session_id, text, language_code='ru-RU'):
     return response.query_result.fulfillment_text
 
 
-def echo(event, vk_api):
-    vk_api.messages.send(
-        user_id=event.user_id,
-        message=event.text,
-        random_id=random.randint(1, 1000)
-    )
-
-
 def main():
     load_dotenv()
     vk_api_token = os.getenv('VK_API_TOKEN')
     telegram_admin_chat_id = os.getenv('TELEGRAM_CHAT_ID')
     telegram_api_token = os.getenv('TELEGRAM_API_TOKEN')
+    google_project_id = os.getenv('GOOGLE_CLOUD_PROJECT')
     logging.basicConfig(
         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO
     )
@@ -64,10 +57,14 @@ def main():
     longpoll = VkLongPoll(vk_session)
 
     try:
+        logger.info('Бот запущен.')
         for event in longpoll.listen():
             if event.type == VkEventType.MESSAGE_NEW and event.to_me:
-                echo(event, vk_api)
-        logger.info('Бот запущен.')
+                vk_api.messages.send(
+                    user_id=event.user_id,
+                    message=detect_intent_texts(google_project_id, event.user_id, event.text),
+                    random_id=random.randint(1, 1000)
+                )
     except requests.exceptions.ConnectionError:
         logger.error('Интернет исчез')
         time.sleep(5)
