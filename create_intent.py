@@ -1,6 +1,8 @@
 import json
+import os
 
 from google.cloud import dialogflow
+from dotenv import load_dotenv
 
 
 def create_intent(project_id, display_name, training_phrases_parts, message_texts):
@@ -26,7 +28,8 @@ def create_intent(project_id, display_name, training_phrases_parts, message_text
 
 
 def main():
-    project_id = 'dvmn-speech-recognizer'
+    load_dotenv()
+    google_project_id = os.getenv('GOOGLE_CLOUD_PROJECT')
 
     with open("files/intents.json", "r", encoding="UTF-8") as file:
         file_contents = file.read()
@@ -35,7 +38,7 @@ def main():
         intents_name = 'Устройство на работу'
 
     create_intent(
-        project_id,
+        google_project_id,
         display_name=intents_name,
         training_phrases_parts=intents[intents_name]['questions'],
         message_texts=intents[intents_name]['answer']
