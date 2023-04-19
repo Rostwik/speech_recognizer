@@ -32,8 +32,9 @@ To work with the vk_bot_recognizer.py application:
   - TELEGRAM_CHAT_ID a unique identifier of the telegram administrator of the vk chatbot, to whom possible errors will be directed
   - GOOGLE_APPLICATION_CREDENTIALS here you need to specify the path to the credentials.json file with access keys (see the Installing section).
   - GOOGLE_CLOUD_PROJECT a unique identifier of the google cloud project (see the Installing section)
-
-
+  
+Optionally:
+  - INTENTS_FILE_PATH is the path to the file with intents. By default, it is located in the root of the project at "files/intents.json"
 ## Installing
 
 To get started go to terminal(mac os) or CMD (Windows)

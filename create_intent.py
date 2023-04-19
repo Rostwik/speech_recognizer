@@ -30,19 +30,22 @@ def create_intent(project_id, display_name, training_phrases_parts, message_text
 def main():
     load_dotenv()
     google_project_id = os.getenv('GOOGLE_CLOUD_PROJECT')
+    path = os.getenv('INTENTS_FILE_PATH')
 
-    with open("files/intents.json", "r", encoding="UTF-8") as file:
+    if not path:
+        path = "files/intents.json"
+
+    with open(path, "r", encoding="UTF-8") as file:
         file_contents = file.read()
         intents = json.loads(file_contents)
 
-        intents_name = 'Устройство на работу'
-
-    create_intent(
-        google_project_id,
-        display_name=intents_name,
-        training_phrases_parts=intents[intents_name]['questions'],
-        message_texts=intents[intents_name]['answer']
-    )
+        for intent in intents:
+            create_intent(
+                google_project_id,
+                display_name=intent,
+                training_phrases_parts=intents[intent]['questions'],
+                message_texts=intents[intent]['answer']
+            )
 
 
 if __name__ == '__main__':
