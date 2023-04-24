@@ -6,7 +6,8 @@ from telegram import Update, ForceReply
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
 from dotenv import load_dotenv
 
-from dialogflow_google_api import detect_intent_texts, TelegramLogsHandler
+from dialogflow_google_api import detect_intent_texts
+from logger_handler import TelegramLogsHandler
 
 logger = logging.getLogger('speech_recognizer')
 

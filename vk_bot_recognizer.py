@@ -11,7 +11,8 @@ from vk_api.longpoll import VkLongPoll, VkEventType
 import telegram
 from dotenv import load_dotenv
 
-from dialogflow_google_api import TelegramLogsHandler, detect_intent_texts
+from dialogflow_google_api import detect_intent_texts
+from logger_handler import TelegramLogsHandler
 
 logger = logging.getLogger('speech_recognizer')
 

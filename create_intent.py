@@ -39,12 +39,13 @@ def main():
         file_contents = file.read()
         intents = json.loads(file_contents)
 
-        for intent in intents:
+        for intent, result in intents.items():
+
             create_intent(
                 google_project_id,
                 display_name=intent,
-                training_phrases_parts=intents[intent]['questions'],
-                message_texts=intents[intent]['answer']
+                training_phrases_parts=result['questions'],
+                message_texts=result['answer']
             )
 
 
